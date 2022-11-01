@@ -1,0 +1,47 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build outputs
+/dist
+/.built
+
+# Helm package outputs
+*.tgz
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Goland IDE
+.idea
+
+# VSCode
+.vscode
+**/__debug_bin
+
+# coverage files
+*.cov
+*coverage.html
+*test-output.txt
+
+# mac files
+.DS_Store
+
+# allow users to add overrides of their dev environments without having to commit to git
+docker-compose.override.yml
+
+# output of contract tests running (logs)
+/tests/contract/logs
+/tests/contract/log
+
+# locally generated pacts by example-consumer test when run locally
+/tests/contract/pacts
+
+*.ova
+*.sig
