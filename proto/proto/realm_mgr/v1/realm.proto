@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "realm_mgr/v1;realm_mgr_v1";
+
+package realm_mgr.v1;
+
+message Realm {
+  string id = 1;
+  string name = 2;
+}
+
+message GetRealmRequest {
+  string id = 1;
+}
+
+message GetRealmResponse {
+  Realm realm = 1;
+}

@@ -1,0 +1,10 @@
+version: v1beta1
+plugins:
+  # Generate go code
+  - name: go
+    out: go
+  - name: go-grpc
+    out: go
+  - name: validate
+    out: go
+    opt: lang=go

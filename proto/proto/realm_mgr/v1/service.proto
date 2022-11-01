@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "realm_mgr/v1;realm_mgr_v1";
+
+package realm_mgr.v1;
+
+import "realm_mgr/v1/realm.proto";
+
+service RealmManagerService {
+  // Realm RPCs
+  //
+  // Get a single active realm
+  rpc    GetRealm    (GetRealmRequest)    returns    (GetRealmResponse)    {}
+}
