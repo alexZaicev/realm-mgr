@@ -10,6 +10,7 @@ jobs:
   checks:
     name: unit-tests
     runs-on: ubuntu-20.04
+    
     steps:
       - uses: actions/checkout@v3.0.2
       - name: Setup go
