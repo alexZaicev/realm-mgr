@@ -4,15 +4,52 @@ option go_package = "realm_mgr/v1;realm_mgr_v1";
 
 package realm_mgr.v1;
 
+import "validate.proto";
+import "realm_mgr/v1/common.proto";
+import "google/protobuf/timestamp.proto";
+
 message Realm {
-  string id = 1;
-  string name = 2;
+  // UUID identifier of the realm
+  string id = 1 [(validate.rules).string.uuid = true];
+  // Name of the realm
+  string name = 2 [(validate.rules).string = {min_len: 1}];
+  // Description of the realm
+  string description = 3;
+  // Current realm status
+  EnumStatus status = 4;
+  // Created at timestamp of the realm
+  google.protobuf.Timestamp created_at = 5;
+  // Updated at timestamp of the realm
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 message GetRealmRequest {
-  string id = 1;
+  // UUID identifier of the realm
+  string id = 1 [(validate.rules).string.uuid = true];
+  // Realm status to be returned
+  EnumStatus status = 2;
 }
 
 message GetRealmResponse {
+  Realm realm = 1;
+}
+
+message CreateRealmRequest {
+  // Name of the realm to be created
+  string name = 1 [(validate.rules).string = {min_len: 1}];
+  // Description of the realm to be created
+  string description = 2;
+}
+
+message CreateRealmResponse {
+  Realm realm = 1;
+}
+
+message ReleaseRealmRequest {
+  // UUID identifier of the realm
+  string id = 1 [(validate.rules).string.uuid = true];
+}
+
+message ReleaseRealmResponse {
   Realm realm = 1;
 }

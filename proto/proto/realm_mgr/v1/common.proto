@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "realm_mgr/v1;realm_mgr_v1";
+
+package realm_mgr.v1;
+
+enum EnumStatus {
+  ENUM_STATUS_UNSPECIFIED = 0;
+  ENUM_STATUS_ACTIVE = 1;
+  ENUM_STATUS_DRAFT = 2;
+  ENUM_STATUS_DISABLED = 3;
+  ENUM_STATUS_DELETED = 4;
+}

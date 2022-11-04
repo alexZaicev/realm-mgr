@@ -1,0 +1,14 @@
+[log]
+level = "DEBUG"
+
+[grpc]
+port = 5000
+
+[database]
+host     = "ccs-pg"
+port     = "5432"
+name     = "realmmgr-dev-db"
+user     = "postgres"
+password = "mysecret"
+ssl_mode = "disable"
+
