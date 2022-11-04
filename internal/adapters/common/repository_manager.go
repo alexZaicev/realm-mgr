@@ -14,7 +14,6 @@ import (
 type DataStoreManager interface {
 	NewNonTransactionalReadDatastore(ctx context.Context) repositories.RealmManagerRepository
 	NewNonTransactionalReadAuditstore(ctx context.Context) repositories.RealmManagerAuditRepository
-	// Write Datastore always includes an Auditstore too
 	NewWriteDatastore(ctx context.Context) (repositories.RealmManagerRepository, repositories.RealmManagerAuditRepository, error)
 	CommitChanges(datastore repositories.RealmManagerRepository, auditstore repositories.RealmManagerAuditRepository) error
 	RollbackChanges(datastore repositories.RealmManagerRepository, auditstore repositories.RealmManagerAuditRepository) error
@@ -46,7 +45,9 @@ func (pdm *PgDataStoreManager) NewNonTransactionalReadAuditstore(ctx context.Con
 	return pdm.DatastoreLifeCycleManager.NewNonTransactionalReadDatastore(ctx)
 }
 
-func (pdm *PgDataStoreManager) NewWriteDatastore(ctx context.Context) (repositories.RealmManagerRepository, repositories.RealmManagerAuditRepository, error) {
+func (pdm *PgDataStoreManager) NewWriteDatastore(
+	ctx context.Context,
+) (repositories.RealmManagerRepository, repositories.RealmManagerAuditRepository, error) {
 	pgstore, err := pdm.DatastoreLifeCycleManager.NewWriteDatastore(ctx)
 	if err != nil {
 		return nil, nil, err
@@ -54,14 +55,15 @@ func (pdm *PgDataStoreManager) NewWriteDatastore(ctx context.Context) (repositor
 	return pgstore, pgstore, nil
 }
 
-func (pdm *PgDataStoreManager) CommitChanges(datastore repositories.RealmManagerRepository, auditstore repositories.RealmManagerAuditRepository) error {
+func (pdm *PgDataStoreManager) CommitChanges(
+	datastore repositories.RealmManagerRepository,
+	auditstore repositories.RealmManagerAuditRepository,
+) error {
 	castDatastore, ok := datastore.(*postgres.DataStore)
 	if !ok {
 		return realmmgr_errors.NewInvalidArgumentError("datastore", "underlying type must be *postgres.DataStore")
 	}
-	// The auditstore and datastore must be the same underlying *postgres.DataStore so they can be committed as a single transaction
-	// since audit logs are currently stored in the postgres database too, and we want to avoid a situation were a change was made
-	// but then recording the audit log for it failed - but the change was still committed.
+
 	castAuditstore, ok := auditstore.(*postgres.DataStore)
 	if !ok {
 		return realmmgr_errors.NewInvalidArgumentError("auditstore", "underlying type must be *postgres.DataStore")
@@ -72,14 +74,15 @@ func (pdm *PgDataStoreManager) CommitChanges(datastore repositories.RealmManager
 	return pdm.DatastoreLifeCycleManager.CommitChanges(castDatastore)
 }
 
-func (pdm *PgDataStoreManager) RollbackChanges(datastore repositories.RealmManagerRepository, auditstore repositories.RealmManagerAuditRepository) error {
+func (pdm *PgDataStoreManager) RollbackChanges(
+	datastore repositories.RealmManagerRepository,
+	auditstore repositories.RealmManagerAuditRepository,
+) error {
 	castDatastore, ok := datastore.(*postgres.DataStore)
 	if !ok {
 		return realmmgr_errors.NewInvalidArgumentError("datastore", "underlying type must be *postgres.DataStore")
 	}
-	// The auditstore and datastore must be the same underlying *postgres.DataStore so they can be committed as a single transaction
-	// since audit logs are currently stored in the postgres database too, and we want to avoid a situation were a change was made
-	// but then recording the audit log for it failed - but the change was still committed.
+
 	castAuditstore, ok := auditstore.(*postgres.DataStore)
 	if !ok {
 		return realmmgr_errors.NewInvalidArgumentError("auditstore", "underlying type must be *postgres.DataStore")
@@ -92,13 +95,6 @@ func (pdm *PgDataStoreManager) RollbackChanges(datastore repositories.RealmManag
 
 const RollbackTimeoutSeconds = 30
 
-// TransactionalRepositories returns a datastore, auditstore and objectstore
-// that can be used to commit changes with the CommitRepositories function.
-// The returned function should be deferred to rollback any changes on error
-// (if the changes are committed then this is a no-op).
-// Passing a nil objectstoreServiceProvider is allowed, in which case the
-// returned repositories.ObjectstoreService will be nil (for usage when only a
-// datastore and auditstore are required).
 func TransactionalRepositories(
 	ctx context.Context,
 	logger logging.Logger,
@@ -128,13 +124,6 @@ func TransactionalRepositories(
 	return datastoreTx, auditstoreTx, rollbackFunc, nil
 }
 
-// CommitRepositories commits the underlying transaction on the give datastore
-// and auditstore and disables undoing operations on the provided objectstore.
-//
-// Passing a nil objectStoreService and objectStoreServiceProvider is allowed,
-// in which case the only the underlying transaction on the datastore and
-// auditstore will be committed (for usage when only a datastore and auditstore
-// were required).
 func CommitRepositories(
 	logger logging.Logger,
 	dataStoreManager DataStoreManager,

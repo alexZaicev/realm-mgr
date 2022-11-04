@@ -104,19 +104,19 @@ func newGRPCServerFromConfig(
 	return grpcserver.NewServer(uint16(port), services, opt...)
 }
 
-func newGRPCServices(realmMgrAPI *realmmgrgrpc.RealmManagerAPI) ([]grpcserver.Service, error) {
+func newGRPCServices(realmMgrAPI *realmmgrgrpc.RealmManagerAPI) []grpcserver.Service {
 	return []grpcserver.Service{
 		realmMgrAPI,
-	}, nil
+	}
 }
 
-func newGRPCServerOptions(logger logging.Logger) ([]grpc.ServerOption, error) {
+func newGRPCServerOptions(logger logging.Logger) []grpc.ServerOption {
 	return []grpc.ServerOption{
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			interceptors.LoggerUnaryServerInterceptor(logger),
 			interceptors.ValidateUnaryServerInterceptor(logger),
 		)),
-	}, nil
+	}
 }
 
 func getConfigFile() (string, error) {

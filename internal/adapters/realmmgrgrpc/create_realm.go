@@ -12,7 +12,10 @@ import (
 	realm_mgr_v1 "github.com/alexZaicev/realm-mgr/proto/go/realm_mgr/v1"
 )
 
-func (api *RealmManagerAPI) CreateRealm(ctx context.Context, req *realm_mgr_v1.CreateRealmRequest) (*realm_mgr_v1.CreateRealmResponse, error) {
+func (api *RealmManagerAPI) CreateRealm(
+	ctx context.Context,
+	req *realm_mgr_v1.CreateRealmRequest,
+) (*realm_mgr_v1.CreateRealmResponse, error) {
 	logger, err := interceptors.LoggerFromContext(ctx)
 	if err != nil {
 		api.backupLogger.WithError(err).Error("failed to extract logger from context")

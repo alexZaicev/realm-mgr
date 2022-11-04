@@ -1,0 +1,6 @@
+# Collapse vendored and generated code in Github PRs
+# Vendored code is also gitignored so should not be present to begin with
+# https://github.com/github/linguist#using-gitattributes
+**/vendor/**  linguist-vendored=true
+**/mocks/**   linguist-generated=true
+**/go.sum     linguist-generated=true

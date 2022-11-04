@@ -57,14 +57,8 @@ func initialize(ctx context.Context, cfgFilePath string) (*application, error) {
 	if err != nil {
 		return nil, err
 	}
-	v2, err := newGRPCServices(realmManagerAPI)
-	if err != nil {
-		return nil, err
-	}
-	v3, err := newGRPCServerOptions(logger)
-	if err != nil {
-		return nil, err
-	}
+	v2 := newGRPCServices(realmManagerAPI)
+	v3 := newGRPCServerOptions(logger)
 	server, err := newGRPCServerFromConfig(config, v2, v3...)
 	if err != nil {
 		return nil, err

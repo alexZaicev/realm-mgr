@@ -1,0 +1,21 @@
+name: checks
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "master" ]
+
+jobs:
+  golangci-lint:
+    name: lint
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v3.0.2
+      - name: Setup go
+        uses: actions/setup-go@v3.3.0
+        with:
+          go-version: 1.18
+      - name: Check committed code
+        run: make -B checks dirty

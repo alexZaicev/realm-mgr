@@ -36,10 +36,39 @@ vendor:
 .PHONY: checks
 checks: wire mocks fmt
 
+.PHONY: dirty
+dirty:
+	if [ $$(git status --porcelain | wc -l) -ne "0" ]; then \
+		echo "Missing / modified files:"; \
+		git status --porcelain; \
+		echo; \
+		echo "Diff of changed files:"; \
+		git diff; \
+		exit 1; \
+	fi
+
+.PHONY: unit
+unit: vendor
+	go test $(DIR_INTERNAL)/... $(DIR_CMD)/... \
+		-cover \
+		-coverprofile=coverage.out \
+		-count=1
+	@cat coverage.out | \
+		awk 'BEGIN {cov=0; stat=0;} $$3!="" { cov+=($$3==1?$$2:0); stat+=$$2; } \
+    	END {printf("Total coverage: %.2f%% of statements\n", (cov/stat)*100);}'
+	go tool cover -html=coverage.out -o coverage.html
+
 .PHONY: build
 build: vendor
 	@mkdir -p $(DIR_DIST)
 	$(GO) build -ldflags "$(LDFLAGS)" -o $(DIR_DIST)/ $(DIR_CMD)/...
+
+.PHONY: lint
+lint: golint #helmlint
+
+.PHONY: golint
+golint:
+	golangci-lint run --concurrency=2 --timeout=30m --max-issues-per-linter 0 --max-same-issues 0
 
 .PHONY: wire
 wire:

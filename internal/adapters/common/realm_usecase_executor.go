@@ -7,7 +7,7 @@ import (
 
 	"github.com/alexZaicev/realm-mgr/internal/domain/entities"
 	realmmgr_errors "github.com/alexZaicev/realm-mgr/internal/domain/errors"
-	"github.com/alexZaicev/realm-mgr/internal/drivers/clock"
+	realmmgr_clock "github.com/alexZaicev/realm-mgr/internal/drivers/clock"
 	"github.com/alexZaicev/realm-mgr/internal/drivers/logging"
 	"github.com/alexZaicev/realm-mgr/internal/drivers/uuidgenerator"
 	"github.com/alexZaicev/realm-mgr/internal/usecases/realms"
@@ -27,7 +27,7 @@ type RealmReleaser interface {
 
 type RealmUseCaseExecutor struct {
 	uuidGen          uuidgenerator.Generator
-	clock            clock.Clock
+	clock            realmmgr_clock.Clock
 	dataStoreManager DataStoreManager
 
 	realmGetter   RealmGetter
@@ -37,7 +37,7 @@ type RealmUseCaseExecutor struct {
 
 func NewRealmUseCaseExecutor(
 	uuidGen uuidgenerator.Generator,
-	clock clock.Clock,
+	clock realmmgr_clock.Clock,
 	dataStoreManager DataStoreManager,
 	realmGetter RealmGetter,
 	realmCreator RealmCreator,
@@ -71,7 +71,12 @@ func NewRealmUseCaseExecutor(
 	}, nil
 }
 
-func (e *RealmUseCaseExecutor) GetRealm(ctx context.Context, logger logging.Logger, realmID uuid.UUID, status entities.Status) (entities.Realm, error) {
+func (e *RealmUseCaseExecutor) GetRealm(
+	ctx context.Context,
+	logger logging.Logger,
+	realmID uuid.UUID,
+	status entities.Status,
+) (entities.Realm, error) {
 	repository := e.dataStoreManager.NewNonTransactionalReadDatastore(ctx)
 
 	repos := realms.GetRealmRepos{
