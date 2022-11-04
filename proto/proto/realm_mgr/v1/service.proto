@@ -10,5 +10,9 @@ service RealmManagerService {
   // Realm RPCs
   //
   // Get a single active realm
-  rpc    GetRealm    (GetRealmRequest)    returns    (GetRealmResponse)    {}
+  rpc    GetRealm        (GetRealmRequest)        returns        (GetRealmResponse)        {}
+  // Create a new realm
+  rpc    CreateRealm     (CreateRealmRequest)     returns        (CreateRealmResponse)     {}
+  // Release existing draft copy of the realm
+  rpc    ReleaseRealm    (ReleaseRealmRequest)    returns        (ReleaseRealmResponse)    {}
 }
