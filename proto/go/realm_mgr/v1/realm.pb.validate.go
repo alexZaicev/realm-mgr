@@ -978,3 +978,265 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ReleaseRealmResponseValidationError{}
+
+// Validate checks the field values on UpdateRealmRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateRealmRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateRealmRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateRealmRequestMultiError, or nil if none found.
+func (m *UpdateRealmRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateRealmRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetRealm()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateRealmRequestValidationError{
+					field:  "Realm",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateRealmRequestValidationError{
+					field:  "Realm",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRealm()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateRealmRequestValidationError{
+				field:  "Realm",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateRealmRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateRealmRequestMultiError is an error wrapping multiple validation errors
+// returned by UpdateRealmRequest.ValidateAll() if the designated constraints
+// aren't met.
+type UpdateRealmRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateRealmRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateRealmRequestMultiError) AllErrors() []error { return m }
+
+// UpdateRealmRequestValidationError is the validation error returned by
+// UpdateRealmRequest.Validate if the designated constraints aren't met.
+type UpdateRealmRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateRealmRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateRealmRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateRealmRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateRealmRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateRealmRequestValidationError) ErrorName() string {
+	return "UpdateRealmRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateRealmRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateRealmRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateRealmRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateRealmRequestValidationError{}
+
+// Validate checks the field values on UpdateRealmResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateRealmResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateRealmResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateRealmResponseMultiError, or nil if none found.
+func (m *UpdateRealmResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateRealmResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetRealm()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateRealmResponseValidationError{
+					field:  "Realm",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateRealmResponseValidationError{
+					field:  "Realm",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRealm()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateRealmResponseValidationError{
+				field:  "Realm",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateRealmResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateRealmResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateRealmResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateRealmResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateRealmResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateRealmResponseMultiError) AllErrors() []error { return m }
+
+// UpdateRealmResponseValidationError is the validation error returned by
+// UpdateRealmResponse.Validate if the designated constraints aren't met.
+type UpdateRealmResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateRealmResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateRealmResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateRealmResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateRealmResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateRealmResponseValidationError) ErrorName() string {
+	return "UpdateRealmResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateRealmResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateRealmResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateRealmResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateRealmResponseValidationError{}

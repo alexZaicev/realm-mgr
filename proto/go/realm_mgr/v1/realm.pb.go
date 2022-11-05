@@ -418,6 +418,100 @@ func (x *ReleaseRealmResponse) GetRealm() *Realm {
 	return nil
 }
 
+type UpdateRealmRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Realm *Realm `protobuf:"bytes,1,opt,name=realm,proto3" json:"realm,omitempty"`
+}
+
+func (x *UpdateRealmRequest) Reset() {
+	*x = UpdateRealmRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_realm_mgr_v1_realm_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateRealmRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRealmRequest) ProtoMessage() {}
+
+func (x *UpdateRealmRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_realm_mgr_v1_realm_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRealmRequest.ProtoReflect.Descriptor instead.
+func (*UpdateRealmRequest) Descriptor() ([]byte, []int) {
+	return file_realm_mgr_v1_realm_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UpdateRealmRequest) GetRealm() *Realm {
+	if x != nil {
+		return x.Realm
+	}
+	return nil
+}
+
+type UpdateRealmResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Realm *Realm `protobuf:"bytes,1,opt,name=realm,proto3" json:"realm,omitempty"`
+}
+
+func (x *UpdateRealmResponse) Reset() {
+	*x = UpdateRealmResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_realm_mgr_v1_realm_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UpdateRealmResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRealmResponse) ProtoMessage() {}
+
+func (x *UpdateRealmResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_realm_mgr_v1_realm_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRealmResponse.ProtoReflect.Descriptor instead.
+func (*UpdateRealmResponse) Descriptor() ([]byte, []int) {
+	return file_realm_mgr_v1_realm_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateRealmResponse) GetRealm() *Realm {
+	if x != nil {
+		return x.Realm
+	}
+	return nil
+}
+
 var File_realm_mgr_v1_realm_proto protoreflect.FileDescriptor
 
 var file_realm_mgr_v1_realm_proto_rawDesc = []byte{
@@ -471,9 +565,17 @@ var file_realm_mgr_v1_realm_proto_rawDesc = []byte{
 	0x52, 0x65, 0x61, 0x6c, 0x6d, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x29, 0x0a,
 	0x05, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x72,
 	0x65, 0x61, 0x6c, 0x6d, 0x5f, 0x6d, 0x67, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x61, 0x6c,
-	0x6d, 0x52, 0x05, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x42, 0x1b, 0x5a, 0x19, 0x72, 0x65, 0x61, 0x6c,
-	0x6d, 0x5f, 0x6d, 0x67, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x5f, 0x6d,
-	0x67, 0x72, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6d, 0x52, 0x05, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x22, 0x3f, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x52, 0x65, 0x61, 0x6c, 0x6d, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x29,
+	0x0a, 0x05, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e,
+	0x72, 0x65, 0x61, 0x6c, 0x6d, 0x5f, 0x6d, 0x67, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x61,
+	0x6c, 0x6d, 0x52, 0x05, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x22, 0x40, 0x0a, 0x13, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x52, 0x65, 0x61, 0x6c, 0x6d, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x29, 0x0a, 0x05, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x13, 0x2e, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x5f, 0x6d, 0x67, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x52,
+	0x65, 0x61, 0x6c, 0x6d, 0x52, 0x05, 0x72, 0x65, 0x61, 0x6c, 0x6d, 0x42, 0x1b, 0x5a, 0x19, 0x72,
+	0x65, 0x61, 0x6c, 0x6d, 0x5f, 0x6d, 0x67, 0x72, 0x2f, 0x76, 0x31, 0x3b, 0x72, 0x65, 0x61, 0x6c,
+	0x6d, 0x5f, 0x6d, 0x67, 0x72, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -488,7 +590,7 @@ func file_realm_mgr_v1_realm_proto_rawDescGZIP() []byte {
 	return file_realm_mgr_v1_realm_proto_rawDescData
 }
 
-var file_realm_mgr_v1_realm_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_realm_mgr_v1_realm_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_realm_mgr_v1_realm_proto_goTypes = []interface{}{
 	(*Realm)(nil),                 // 0: realm_mgr.v1.Realm
 	(*GetRealmRequest)(nil),       // 1: realm_mgr.v1.GetRealmRequest
@@ -497,22 +599,26 @@ var file_realm_mgr_v1_realm_proto_goTypes = []interface{}{
 	(*CreateRealmResponse)(nil),   // 4: realm_mgr.v1.CreateRealmResponse
 	(*ReleaseRealmRequest)(nil),   // 5: realm_mgr.v1.ReleaseRealmRequest
 	(*ReleaseRealmResponse)(nil),  // 6: realm_mgr.v1.ReleaseRealmResponse
-	(EnumStatus)(0),               // 7: realm_mgr.v1.EnumStatus
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*UpdateRealmRequest)(nil),    // 7: realm_mgr.v1.UpdateRealmRequest
+	(*UpdateRealmResponse)(nil),   // 8: realm_mgr.v1.UpdateRealmResponse
+	(EnumStatus)(0),               // 9: realm_mgr.v1.EnumStatus
+	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
 }
 var file_realm_mgr_v1_realm_proto_depIdxs = []int32{
-	7, // 0: realm_mgr.v1.Realm.status:type_name -> realm_mgr.v1.EnumStatus
-	8, // 1: realm_mgr.v1.Realm.created_at:type_name -> google.protobuf.Timestamp
-	8, // 2: realm_mgr.v1.Realm.updated_at:type_name -> google.protobuf.Timestamp
-	7, // 3: realm_mgr.v1.GetRealmRequest.status:type_name -> realm_mgr.v1.EnumStatus
-	0, // 4: realm_mgr.v1.GetRealmResponse.realm:type_name -> realm_mgr.v1.Realm
-	0, // 5: realm_mgr.v1.CreateRealmResponse.realm:type_name -> realm_mgr.v1.Realm
-	0, // 6: realm_mgr.v1.ReleaseRealmResponse.realm:type_name -> realm_mgr.v1.Realm
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	9,  // 0: realm_mgr.v1.Realm.status:type_name -> realm_mgr.v1.EnumStatus
+	10, // 1: realm_mgr.v1.Realm.created_at:type_name -> google.protobuf.Timestamp
+	10, // 2: realm_mgr.v1.Realm.updated_at:type_name -> google.protobuf.Timestamp
+	9,  // 3: realm_mgr.v1.GetRealmRequest.status:type_name -> realm_mgr.v1.EnumStatus
+	0,  // 4: realm_mgr.v1.GetRealmResponse.realm:type_name -> realm_mgr.v1.Realm
+	0,  // 5: realm_mgr.v1.CreateRealmResponse.realm:type_name -> realm_mgr.v1.Realm
+	0,  // 6: realm_mgr.v1.ReleaseRealmResponse.realm:type_name -> realm_mgr.v1.Realm
+	0,  // 7: realm_mgr.v1.UpdateRealmRequest.realm:type_name -> realm_mgr.v1.Realm
+	0,  // 8: realm_mgr.v1.UpdateRealmResponse.realm:type_name -> realm_mgr.v1.Realm
+	9,  // [9:9] is the sub-list for method output_type
+	9,  // [9:9] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_realm_mgr_v1_realm_proto_init() }
@@ -606,6 +712,30 @@ func file_realm_mgr_v1_realm_proto_init() {
 				return nil
 			}
 		}
+		file_realm_mgr_v1_realm_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateRealmRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_realm_mgr_v1_realm_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateRealmResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -613,7 +743,7 @@ func file_realm_mgr_v1_realm_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_realm_mgr_v1_realm_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

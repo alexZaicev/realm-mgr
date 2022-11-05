@@ -15,4 +15,6 @@ service RealmManagerService {
   rpc    CreateRealm     (CreateRealmRequest)     returns        (CreateRealmResponse)     {}
   // Release existing draft copy of the realm
   rpc    ReleaseRealm    (ReleaseRealmRequest)    returns        (ReleaseRealmResponse)    {}
+  // Update single realm
+  rpc    UpdateRealm     (UpdateRealmRequest)     returns        (UpdateRealmResponse)     {}
 }

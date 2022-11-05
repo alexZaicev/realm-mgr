@@ -30,6 +30,8 @@ type RealmManagerServiceClient interface {
 	CreateRealm(ctx context.Context, in *CreateRealmRequest, opts ...grpc.CallOption) (*CreateRealmResponse, error)
 	// Release existing draft copy of the realm
 	ReleaseRealm(ctx context.Context, in *ReleaseRealmRequest, opts ...grpc.CallOption) (*ReleaseRealmResponse, error)
+	// Update single realm
+	UpdateRealm(ctx context.Context, in *UpdateRealmRequest, opts ...grpc.CallOption) (*UpdateRealmResponse, error)
 }
 
 type realmManagerServiceClient struct {
@@ -67,6 +69,15 @@ func (c *realmManagerServiceClient) ReleaseRealm(ctx context.Context, in *Releas
 	return out, nil
 }
 
+func (c *realmManagerServiceClient) UpdateRealm(ctx context.Context, in *UpdateRealmRequest, opts ...grpc.CallOption) (*UpdateRealmResponse, error) {
+	out := new(UpdateRealmResponse)
+	err := c.cc.Invoke(ctx, "/realm_mgr.v1.RealmManagerService/UpdateRealm", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RealmManagerServiceServer is the server API for RealmManagerService service.
 // All implementations must embed UnimplementedRealmManagerServiceServer
 // for forward compatibility
@@ -79,6 +90,8 @@ type RealmManagerServiceServer interface {
 	CreateRealm(context.Context, *CreateRealmRequest) (*CreateRealmResponse, error)
 	// Release existing draft copy of the realm
 	ReleaseRealm(context.Context, *ReleaseRealmRequest) (*ReleaseRealmResponse, error)
+	// Update single realm
+	UpdateRealm(context.Context, *UpdateRealmRequest) (*UpdateRealmResponse, error)
 	mustEmbedUnimplementedRealmManagerServiceServer()
 }
 
@@ -94,6 +107,9 @@ func (UnimplementedRealmManagerServiceServer) CreateRealm(context.Context, *Crea
 }
 func (UnimplementedRealmManagerServiceServer) ReleaseRealm(context.Context, *ReleaseRealmRequest) (*ReleaseRealmResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReleaseRealm not implemented")
+}
+func (UnimplementedRealmManagerServiceServer) UpdateRealm(context.Context, *UpdateRealmRequest) (*UpdateRealmResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRealm not implemented")
 }
 func (UnimplementedRealmManagerServiceServer) mustEmbedUnimplementedRealmManagerServiceServer() {}
 
@@ -162,6 +178,24 @@ func _RealmManagerService_ReleaseRealm_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RealmManagerService_UpdateRealm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRealmRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RealmManagerServiceServer).UpdateRealm(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/realm_mgr.v1.RealmManagerService/UpdateRealm",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RealmManagerServiceServer).UpdateRealm(ctx, req.(*UpdateRealmRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RealmManagerService_ServiceDesc is the grpc.ServiceDesc for RealmManagerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -180,6 +214,10 @@ var RealmManagerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReleaseRealm",
 			Handler:    _RealmManagerService_ReleaseRealm_Handler,
+		},
+		{
+			MethodName: "UpdateRealm",
+			Handler:    _RealmManagerService_UpdateRealm_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -17,6 +17,7 @@ type RealmOps interface {
 	GetRealm(ctx context.Context, logger logging.Logger, realmID uuid.UUID, status entities.Status) (entities.Realm, error)
 	CreateRealm(ctx context.Context, logger logging.Logger, name, description string) (entities.Realm, error)
 	ReleaseRealm(ctx context.Context, logger logging.Logger, realmID uuid.UUID) (entities.Realm, error)
+	UpdateRealm(ctx context.Context, logger logging.Logger, realm entities.Realm) (entities.Realm, error)
 }
 
 type RealmManagerAPI struct {

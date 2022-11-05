@@ -25,6 +25,10 @@ type RealmReleaser interface {
 	ReleaseRealm(ctx context.Context, repos realms.ReleaseRealmRepos, input realms.ReleaseRealmInput) (entities.Realm, error)
 }
 
+type RealmUpdater interface {
+	UpdateRealm(ctx context.Context, repos realms.UpdateRealmRepos, input realms.UpdateRealmInput) (entities.Realm, error)
+}
+
 type RealmUseCaseExecutor struct {
 	uuidGen          uuidgenerator.Generator
 	clock            realmmgr_clock.Clock
@@ -33,6 +37,7 @@ type RealmUseCaseExecutor struct {
 	realmGetter   RealmGetter
 	realmCreator  RealmCreator
 	realmReleaser RealmReleaser
+	realmUpdater  RealmUpdater
 }
 
 func NewRealmUseCaseExecutor(
@@ -42,6 +47,7 @@ func NewRealmUseCaseExecutor(
 	realmGetter RealmGetter,
 	realmCreator RealmCreator,
 	realmReleaser RealmReleaser,
+	realmUpdater RealmUpdater,
 ) (*RealmUseCaseExecutor, error) {
 	if uuidGen == nil {
 		return nil, realmmgr_errors.NewInvalidArgumentError("uuidGen", realmmgr_errors.ErrMsgCannotBeNil)
@@ -61,6 +67,9 @@ func NewRealmUseCaseExecutor(
 	if realmReleaser == nil {
 		return nil, realmmgr_errors.NewInvalidArgumentError("realmReleaser", realmmgr_errors.ErrMsgCannotBeNil)
 	}
+	if realmUpdater == nil {
+		return nil, realmmgr_errors.NewInvalidArgumentError("realmUpdater", realmmgr_errors.ErrMsgCannotBeNil)
+	}
 	return &RealmUseCaseExecutor{
 		uuidGen:          uuidGen,
 		clock:            clock,
@@ -68,6 +77,7 @@ func NewRealmUseCaseExecutor(
 		realmGetter:      realmGetter,
 		realmCreator:     realmCreator,
 		realmReleaser:    realmReleaser,
+		realmUpdater:     realmUpdater,
 	}, nil
 }
 
@@ -130,6 +140,7 @@ func (e *RealmUseCaseExecutor) CreateRealm(ctx context.Context, logger logging.L
 	return realm, nil
 }
 
+//nolint:dupl // similar to UpdateRealm
 func (e *RealmUseCaseExecutor) ReleaseRealm(ctx context.Context, logger logging.Logger, realmID uuid.UUID) (entities.Realm, error) {
 	repository, auditRepository, rollbackFn, err := TransactionalRepositories(ctx, logger, e.dataStoreManager)
 	if err != nil {
@@ -149,6 +160,42 @@ func (e *RealmUseCaseExecutor) ReleaseRealm(ctx context.Context, logger logging.
 	}
 
 	realm, err := e.realmReleaser.ReleaseRealm(ctx, repos, input)
+	if err != nil {
+		return entities.Realm{}, err
+	}
+
+	if commitErr := CommitRepositories(logger, e.dataStoreManager, repository, auditRepository); err != nil {
+		logger.WithError(commitErr).Error("failed to commit transaction")
+		return entities.Realm{}, realmmgr_errors.NewInternalError("failed to commit transaction", commitErr)
+	}
+
+	return realm, nil
+}
+
+//nolint:dupl // similar to ReleaseRealm
+func (e *RealmUseCaseExecutor) UpdateRealm(
+	ctx context.Context,
+	logger logging.Logger,
+	realmToUpdate entities.Realm,
+) (entities.Realm, error) {
+	repository, auditRepository, rollbackFn, err := TransactionalRepositories(ctx, logger, e.dataStoreManager)
+	if err != nil {
+		logger.WithError(err).Error("failed to configure repositories")
+		return entities.Realm{}, realmmgr_errors.NewInternalError("failed to configure repositories", err)
+	}
+	defer rollbackFn()
+
+	repos := realms.UpdateRealmRepos{
+		Logger:     logger,
+		Clock:      e.clock,
+		Repository: repository,
+	}
+
+	input := realms.UpdateRealmInput{
+		Realm: realmToUpdate,
+	}
+
+	realm, err := e.realmUpdater.UpdateRealm(ctx, repos, input)
 	if err != nil {
 		return entities.Realm{}, err
 	}
