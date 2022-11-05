@@ -1,0 +1,11 @@
+
+database:
+  host: ccs-pg
+  port: 5432
+  user: postgres
+  password: mysecret
+  name: realmmgr-dev-db
+  ssl_mode: disable
+
+grpc:
+  target: localhost:5000

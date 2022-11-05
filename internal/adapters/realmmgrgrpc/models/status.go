@@ -15,7 +15,6 @@ var (
 		entities.StatusActive:   realm_mgr_v1.EnumStatus_ENUM_STATUS_ACTIVE,
 		entities.StatusDraft:    realm_mgr_v1.EnumStatus_ENUM_STATUS_DRAFT,
 		entities.StatusDisabled: realm_mgr_v1.EnumStatus_ENUM_STATUS_DISABLED,
-		entities.StatusDeleted:  realm_mgr_v1.EnumStatus_ENUM_STATUS_DELETED,
 	}
 
 	StatusGRPCValues = func() map[realm_mgr_v1.EnumStatus]entities.Status {
