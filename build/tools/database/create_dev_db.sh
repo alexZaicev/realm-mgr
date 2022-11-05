@@ -8,7 +8,7 @@ if ! psql -h ccs-pg -U postgres -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; the
 fi
 
 # drop tables and types
-psql -h ccs-pg -U postgres "$DB_NAME" -f "$DIR"/drop.sql  
+psql -h ccs-pg -U postgres "$DB_NAME" -f "$DIR"/drop.sql
 
 # install required extensions
 psql -h ccs-pg -U postgres "$DB_NAME" -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
