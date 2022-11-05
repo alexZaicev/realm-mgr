@@ -7,9 +7,23 @@ on:
     branches: [ "master" ]
 
 jobs:
-  runner-job:
+  container-job:
     name: functional-tests
     runs-on: ubuntu-20.04
+
+    services:
+      ccs-pg:
+        image: postgres:13.8
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_PASSWORD: mysecret
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v3.0.2
@@ -27,17 +41,3 @@ jobs:
         run: make functional
         env:
           FUNCTIONAL_TESTS_CONFIG_FILE: ./tests/functional/ci-config.yml
-
-    services:
-      ccs-pg:
-        image: postgres:13.8
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_PASSWORD: mysecret
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
