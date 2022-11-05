@@ -19,6 +19,8 @@ jobs:
           go-version: 1.18
       - name: Build
         run: make build
+      - name: Initialize database tables
+        run: make init_dev_db
       - name: Run service
         run: nohup ./dist/realm-mgr-grpc &>/dev/null &
       - name: Run functional tests
@@ -27,13 +29,12 @@ jobs:
           FUNCTIONAL_TESTS_CONFIG_FILE: ./tests/functional/ci-config.yml
 
     services:
-      postgres-ft:
+      ccs-pg:
         image: postgres:13.8
         ports:
           - 5432:5432
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: mysecret
         options: >-
           --health-cmd pg_isready
