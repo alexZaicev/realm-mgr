@@ -83,6 +83,29 @@ func (_m *RealmManagerServiceServer) ReleaseRealm(_a0 context.Context, _a1 *real
 	return r0, r1
 }
 
+// UpdateRealm provides a mock function with given fields: _a0, _a1
+func (_m *RealmManagerServiceServer) UpdateRealm(_a0 context.Context, _a1 *realm_mgr_v1.UpdateRealmRequest) (*realm_mgr_v1.UpdateRealmResponse, error) {
+	ret := _m.Called(_a0, _a1)
+
+	var r0 *realm_mgr_v1.UpdateRealmResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *realm_mgr_v1.UpdateRealmRequest) *realm_mgr_v1.UpdateRealmResponse); ok {
+		r0 = rf(_a0, _a1)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*realm_mgr_v1.UpdateRealmResponse)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *realm_mgr_v1.UpdateRealmRequest) error); ok {
+		r1 = rf(_a0, _a1)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // mustEmbedUnimplementedRealmManagerServiceServer provides a mock function with given fields:
 func (_m *RealmManagerServiceServer) mustEmbedUnimplementedRealmManagerServiceServer() {
 	_m.Called()

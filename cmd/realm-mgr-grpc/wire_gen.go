@@ -49,7 +49,8 @@ func initialize(ctx context.Context, cfgFilePath string) (*application, error) {
 	getRealm := realms.NewGetRealm()
 	createRealm := realms.NewCreateRealm()
 	releaseRealm := realms.NewReleaseRealm()
-	realmUseCaseExecutor, err := common.NewRealmUseCaseExecutor(googleUUIDGenerator, stdLibClock, pgDataStoreManager, getRealm, createRealm, releaseRealm)
+	updateRealm := realms.NewUpdateRealm()
+	realmUseCaseExecutor, err := common.NewRealmUseCaseExecutor(googleUUIDGenerator, stdLibClock, pgDataStoreManager, getRealm, createRealm, releaseRealm, updateRealm)
 	if err != nil {
 		return nil, err
 	}

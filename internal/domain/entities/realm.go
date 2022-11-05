@@ -24,3 +24,15 @@ func (r Realm) Merge(realm Realm) Realm {
 
 	return r
 }
+
+func (r Realm) DeepCopyRealm() Realm {
+	return Realm{
+		ID:          r.ID,
+		Name:        r.Name,
+		Description: r.Description,
+		Status:      r.Status,
+		CreatedAt:   r.CreatedAt,
+		UpdatedAt:   r.UpdatedAt,
+		DeletedAt:   r.DeletedAt,
+	}
+}

@@ -81,6 +81,27 @@ func (_m *RealmOps) ReleaseRealm(ctx context.Context, logger logging.Logger, rea
 	return r0, r1
 }
 
+// UpdateRealm provides a mock function with given fields: ctx, logger, realm
+func (_m *RealmOps) UpdateRealm(ctx context.Context, logger logging.Logger, realm entities.Realm) (entities.Realm, error) {
+	ret := _m.Called(ctx, logger, realm)
+
+	var r0 entities.Realm
+	if rf, ok := ret.Get(0).(func(context.Context, logging.Logger, entities.Realm) entities.Realm); ok {
+		r0 = rf(ctx, logger, realm)
+	} else {
+		r0 = ret.Get(0).(entities.Realm)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, logging.Logger, entities.Realm) error); ok {
+		r1 = rf(ctx, logger, realm)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 type mockConstructorTestingTNewRealmOps interface {
 	mock.TestingT
 	Cleanup(func())

@@ -42,10 +42,12 @@ func initialize(ctx context.Context, cfgFilePath string) (*application, error) {
 		realms.NewGetRealm,
 		realms.NewCreateRealm,
 		realms.NewReleaseRealm,
+		realms.NewUpdateRealm,
 		// UseCase executors
 		wire.Bind(new(adaptercommon.RealmGetter), new(*realms.GetRealm)),
 		wire.Bind(new(adaptercommon.RealmCreator), new(*realms.CreateRealm)),
 		wire.Bind(new(adaptercommon.RealmReleaser), new(*realms.ReleaseRealm)),
+		wire.Bind(new(adaptercommon.RealmUpdater), new(*realms.UpdateRealm)),
 		adaptercommon.NewRealmUseCaseExecutor,
 		// gRPC server
 		wire.Bind(new(realmmgrgrpc.RealmOps), new(*adaptercommon.RealmUseCaseExecutor)),
