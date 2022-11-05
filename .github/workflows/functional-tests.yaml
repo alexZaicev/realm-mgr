@@ -32,10 +32,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          - POSTGRES_HOST_AUTH_METHOD=trust
-          - POSTGRES_USER=postgres
-          - POSTGRES_PASSWORD=mysecret
-          - PGDATA=/var/lib/postgresql/data
+          - POSTGRES_HOST_AUTH_METHOD: trust
+          - POSTGRES_USER: postgres
+          - POSTGRES_PASSWORD: mysecret
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
