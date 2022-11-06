@@ -96,14 +96,14 @@ mocks: $(INTERNAL_NON_TEST_GO_FILES)
 ## fmt: format the code
 .PHONY: fmt
 fmt:
-	gofmt -s -w -e $(DIR_CMD) $(DIR_INTERNAL)
+	gofmt -s -w -e $(DIR_CMD) $(DIR_INTERNAL) $(DIR_FTS)
 	gci write \
 		-s Standard \
 		-s Default \
 		-s 'Prefix(github.com)' \
 		-s 'Prefix(github.com/alexZaicev/realm-mgr)' \
-		$(DIR_CMD) $(DIR_INTERNAL)
-	goimports -local github.hpe.com -w $(DIR_CMD) $(DIR_INTERNAL)
+		$(DIR_CMD) $(DIR_INTERNAL) $(DIR_FTS)
+	goimports -local github.hpe.com -w $(DIR_CMD) $(DIR_INTERNAL) $(DIR_FTS)
 
 # -----------------------------------------------------------------
 # Proto build targets

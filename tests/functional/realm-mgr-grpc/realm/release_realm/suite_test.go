@@ -1,4 +1,4 @@
-package getrealm
+package releaserealm
 
 import (
 	"context"
@@ -8,25 +8,23 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/alexZaicev/realm-mgr/internal/adapters/realmmgrgrpc/models"
 	"github.com/alexZaicev/realm-mgr/internal/domain/entities"
 	realm_mgr_v1 "github.com/alexZaicev/realm-mgr/proto/go/realm_mgr/v1"
 	"github.com/alexZaicev/realm-mgr/tests/functional/utils"
 )
 
-func TestRealmManagerGetRealmGRPCSuite(t *testing.T) {
-	testSuite := NewGetRealmTestSuite(t)
+func TestRealmManagerReleaseRealmGRPCSuite(t *testing.T) {
+	testSuite := NewReleaseRealmTestSuite(t)
 	suite.Run(t, testSuite)
 }
 
-type GetRealmTestSuite struct {
+type ReleaseRealmTestSuite struct {
 	suite.Suite
 
 	db     *utils.DB
@@ -45,7 +43,7 @@ type GetRealmTestSuite struct {
 	deletedRealmID uuid.UUID
 }
 
-func NewGetRealmTestSuite(t *testing.T) *GetRealmTestSuite {
+func NewReleaseRealmTestSuite(t *testing.T) *ReleaseRealmTestSuite {
 	cfg, err := utils.LoadConfig()
 	require.NoError(t, err, "error loading configuration file")
 
@@ -55,13 +53,13 @@ func NewGetRealmTestSuite(t *testing.T) *GetRealmTestSuite {
 	client, err := utils.NewRealmManagerGRPCClient(cfg)
 	require.NoError(t, err, "error creating gRPC client")
 
-	return &GetRealmTestSuite{
+	return &ReleaseRealmTestSuite{
 		db:     db,
 		client: client,
 	}
 }
 
-func (s *GetRealmTestSuite) SetupSuite() {
+func (s *ReleaseRealmTestSuite) SetupSuite() {
 	require.NoError(s.T(), s.populateTestData(), "error populating test data")
 
 	// get realm IDs for later tests
@@ -96,52 +94,22 @@ func (s *GetRealmTestSuite) SetupSuite() {
 	}
 }
 
-func (s *GetRealmTestSuite) TearDownSuite() {
+func (s *ReleaseRealmTestSuite) TearDownSuite() {
 	err := s.db.Wipe()
 	require.NoError(s.T(), err, "error wiping database")
 }
 
-func (s *GetRealmTestSuite) Test_GetRealm_Success() {
+func (s *ReleaseRealmTestSuite) Test_ReleaseRealm_Success() {
 	testCases := []struct {
 		name             string
-		req              *realm_mgr_v1.GetRealmRequest
+		realmID          uuid.UUID
 		expectedResponse *realm_mgr_v1.Realm
 		skip             bool
 	}{
 		{
-			name: "get single active realm (without status field provided)",
-			req: &realm_mgr_v1.GetRealmRequest{
-				Id: s.activeRealmID.String(),
-			},
-			expectedResponse: s.realmToGRPC(s.activeRealm),
-			skip:             s.activeRealm == nil,
-		},
-		{
-			name: "get single active realm (without status field provided)",
-			req: &realm_mgr_v1.GetRealmRequest{
-				Id:     s.activeRealmID.String(),
-				Status: entities.StatusActive,
-			},
-			expectedResponse: s.realmToGRPC(s.activeRealm),
-			skip:             s.activeRealm == nil,
-		},
-		{
-			name: "get single draft realm",
-			req: &realm_mgr_v1.GetRealmRequest{
-				Id:     s.draftRealmID.String(),
-				Status: entities.StatusDraft,
-			},
+			name:             "release draft realm",
+			realmID:          s.draftRealmID,
 			expectedResponse: s.realmToGRPC(s.draftRealm),
-			skip:             s.draftRealm == nil,
-		},
-		{
-			name: "get single disabled realm",
-			req: &realm_mgr_v1.GetRealmRequest{
-				Id:     s.disabledRealmID.String(),
-				Status: entities.StatusDisabled,
-			},
-			expectedResponse: s.realmToGRPC(s.disabledRealm),
-			skip:             s.disabledRealm == nil,
 		},
 	}
 
@@ -152,34 +120,41 @@ func (s *GetRealmTestSuite) Test_GetRealm_Success() {
 			require.NoError(t, err)
 
 			// act
-			res, err := s.client.GetRealm(ctx, tc.req)
+			res, err := s.client.ReleaseRealm(ctx, &realm_mgr_v1.ReleaseRealmRequest{
+				Id: tc.realmID.String(),
+			})
 
 			// assert
 			assert.NoError(t, err)
 
 			require.NotNil(t, res)
-			assert.Equal(t, tc.expectedResponse, res.GetRealm())
+			require.NotNil(t, res.GetRealm())
+
+			assert.Equal(t, tc.expectedResponse.Id, res.GetRealm().Id)
+			assert.Equal(t, tc.expectedResponse.Name, res.GetRealm().Name)
+			assert.Equal(t, tc.expectedResponse.Description, res.GetRealm().Description)
+			assert.Equal(t, tc.expectedResponse.Status, res.GetRealm().Status)
 		})
 	}
 }
 
-func (s *GetRealmTestSuite) Test_GetRealm_InvalidArgument() {
+func (s *ReleaseRealmTestSuite) Test_ReleaseRealm_InvalidArgument() {
 	testCases := []struct {
 		name           string
-		req            *realm_mgr_v1.GetRealmRequest
+		req            *realm_mgr_v1.ReleaseRealmRequest
 		expectedErrMsg string
 	}{
 		{
 			name:           "no ID provided",
-			req:            &realm_mgr_v1.GetRealmRequest{},
-			expectedErrMsg: "invalid GetRealmRequest.Id: value must be a valid UUID | caused by: invalid uuid format",
+			req:            &realm_mgr_v1.ReleaseRealmRequest{},
+			expectedErrMsg: "invalid ReleaseRealmRequest.Id: value must be a valid UUID | caused by: invalid uuid format",
 		},
 		{
 			name: "malformed ID provided",
-			req: &realm_mgr_v1.GetRealmRequest{
+			req: &realm_mgr_v1.ReleaseRealmRequest{
 				Id: "not-valid-uuid",
 			},
-			expectedErrMsg: "invalid GetRealmRequest.Id: value must be a valid UUID | caused by: invalid uuid format",
+			expectedErrMsg: "invalid ReleaseRealmRequest.Id: value must be a valid UUID | caused by: invalid uuid format",
 		},
 	}
 
@@ -190,7 +165,7 @@ func (s *GetRealmTestSuite) Test_GetRealm_InvalidArgument() {
 			require.NoError(t, err)
 
 			// act
-			res, err := s.client.GetRealm(ctx, tc.req)
+			res, err := s.client.ReleaseRealm(ctx, tc.req)
 
 			// assert
 			assert.Nil(t, res)
@@ -206,27 +181,32 @@ func (s *GetRealmTestSuite) Test_GetRealm_InvalidArgument() {
 	}
 }
 
-func (s *GetRealmTestSuite) Test_GetRealm_NotFound() {
+func (s *ReleaseRealmTestSuite) Test_ReleaseRealm_NotFound() {
 	testCases := []struct {
 		name string
-		req  *realm_mgr_v1.GetRealmRequest
+		req  *realm_mgr_v1.ReleaseRealmRequest
 	}{
 		{
 			name: "non-existing realm",
-			req: &realm_mgr_v1.GetRealmRequest{
+			req: &realm_mgr_v1.ReleaseRealmRequest{
 				Id: uuid.New().String(),
 			},
 		},
 		{
-			name: "non-existing draft realm",
-			req: &realm_mgr_v1.GetRealmRequest{
-				Id:     uuid.New().String(),
-				Status: realm_mgr_v1.EnumStatus_ENUM_STATUS_DRAFT,
+			name: "active realm",
+			req: &realm_mgr_v1.ReleaseRealmRequest{
+				Id: s.activeRealmID.String(),
 			},
 		},
 		{
-			name: "deleted realm not visible",
-			req: &realm_mgr_v1.GetRealmRequest{
+			name: "disabled realm",
+			req: &realm_mgr_v1.ReleaseRealmRequest{
+				Id: s.disabledRealmID.String(),
+			},
+		},
+		{
+			name: "deleted realm",
+			req: &realm_mgr_v1.ReleaseRealmRequest{
 				Id: s.disabledRealm.ID.String(),
 			},
 		},
@@ -239,7 +219,7 @@ func (s *GetRealmTestSuite) Test_GetRealm_NotFound() {
 			require.NoError(t, err)
 
 			// act
-			res, err := s.client.GetRealm(ctx, tc.req)
+			res, err := s.client.ReleaseRealm(ctx, tc.req)
 
 			// assert
 			assert.Nil(t, res)
@@ -250,12 +230,12 @@ func (s *GetRealmTestSuite) Test_GetRealm_NotFound() {
 			require.True(t, ok)
 
 			assert.Equal(t, codes.NotFound, gRPCError.Code())
-			assert.Equal(t, fmt.Sprintf("realm with ID not found: %s", tc.req.Id), gRPCError.Message())
+			assert.Equal(t, fmt.Sprintf("no releasable realm with ID found: %s", tc.req.Id), gRPCError.Message())
 		})
 	}
 }
 
-func (s *GetRealmTestSuite) populateTestData() error {
+func (s *ReleaseRealmTestSuite) populateTestData() error {
 	realms := []entities.Realm{
 		{
 			ID:          uuid.New(),
@@ -305,20 +285,15 @@ func (s *GetRealmTestSuite) populateTestData() error {
 	return nil
 }
 
-func (s *GetRealmTestSuite) realmToGRPC(realm *entities.Realm) *realm_mgr_v1.Realm {
+func (s *ReleaseRealmTestSuite) realmToGRPC(realm *entities.Realm) *realm_mgr_v1.Realm {
 	if realm == nil {
 		return nil
 	}
-
-	grpcStatus, ok := models.StatusEnumValues[realm.Status]
-	require.True(s.T(), ok, "unexpected status type: %d", realm.Status)
 
 	return &realm_mgr_v1.Realm{
 		Id:          realm.ID.String(),
 		Name:        realm.Name,
 		Description: realm.Description,
-		Status:      grpcStatus,
-		CreatedAt:   timestamppb.New(realm.CreatedAt),
-		UpdatedAt:   timestamppb.New(realm.UpdatedAt),
+		Status:      realm_mgr_v1.EnumStatus_ENUM_STATUS_ACTIVE,
 	}
 }

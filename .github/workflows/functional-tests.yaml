@@ -40,6 +40,11 @@ jobs:
       # Initialize database
       - name: Initialize database tables
         run: make init_dev_db
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_USER: postgres
+          DATABASE_NAME: realmmgr-dev-db
 
       # Run realm-mgr-grpc in the background
       - name: Run service

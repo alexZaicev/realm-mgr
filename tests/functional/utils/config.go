@@ -3,11 +3,12 @@ package utils
 import (
 	"errors"
 	"flag"
-	"github.com/alexZaicev/realm-mgr/internal/drivers/config"
 	"os"
 	"path"
 	"regexp"
 	"strings"
+
+	"github.com/alexZaicev/realm-mgr/internal/drivers/config"
 )
 
 const (

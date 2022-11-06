@@ -2,10 +2,12 @@ package utils
 
 import (
 	"fmt"
+
 	sq "github.com/Masterminds/squirrel"
+	"github.com/google/uuid"
+
 	"github.com/alexZaicev/realm-mgr/internal/adapters/postgres/models"
 	"github.com/alexZaicev/realm-mgr/internal/domain/entities"
-	"github.com/google/uuid"
 )
 
 func GenerateRealmInsertQueries(realms ...entities.Realm) ([]sq.InsertBuilder, error) {

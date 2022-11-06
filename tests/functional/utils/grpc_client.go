@@ -3,12 +3,14 @@ package utils
 import (
 	"context"
 	"fmt"
-	"github.com/alexZaicev/realm-mgr/internal/drivers/config"
-	realm_mgr_v1 "github.com/alexZaicev/realm-mgr/proto/go/realm_mgr/v1"
+	"time"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
-	"time"
+
+	"github.com/alexZaicev/realm-mgr/internal/drivers/config"
+	realm_mgr_v1 "github.com/alexZaicev/realm-mgr/proto/go/realm_mgr/v1"
 )
 
 const (

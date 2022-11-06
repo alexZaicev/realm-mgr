@@ -4,12 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	sq "github.com/Masterminds/squirrel"
+	"github.com/google/uuid"
+
 	"github.com/alexZaicev/realm-mgr/internal/adapters/postgres/models"
 	"github.com/alexZaicev/realm-mgr/internal/domain/entities"
 	"github.com/alexZaicev/realm-mgr/internal/drivers/config"
 	"github.com/alexZaicev/realm-mgr/internal/drivers/pgdb"
-	"github.com/google/uuid"
 )
 
 const (
@@ -86,6 +88,7 @@ func (d *DB) ExecuteInsertQueries(ctx context.Context, queries ...sq.InsertBuild
 	if err != nil {
 		return nil, err
 	}
+	//nolint:errcheck // ignore transaction rollback error
 	defer d.connProvider.Rollback(conn)
 
 	results := make([]sql.Result, len(queries))
