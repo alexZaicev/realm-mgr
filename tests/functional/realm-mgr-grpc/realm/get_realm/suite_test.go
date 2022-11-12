@@ -147,6 +147,10 @@ func (s *GetRealmTestSuite) Test_GetRealm_Success() {
 
 	for _, tc := range testCases {
 		s.T().Run(tc.name, func(t *testing.T) {
+			if tc.skip {
+				s.T().Skip("environment not setup for this test case")
+			}
+
 			// arrange
 			ctx, err := utils.MakeGRPCRequestContext(context.Background())
 			require.NoError(t, err)
@@ -210,6 +214,7 @@ func (s *GetRealmTestSuite) Test_GetRealm_NotFound() {
 	testCases := []struct {
 		name string
 		req  *realm_mgr_v1.GetRealmRequest
+		skip bool
 	}{
 		{
 			name: "non-existing realm",
@@ -227,13 +232,18 @@ func (s *GetRealmTestSuite) Test_GetRealm_NotFound() {
 		{
 			name: "deleted realm not visible",
 			req: &realm_mgr_v1.GetRealmRequest{
-				Id: s.disabledRealm.ID.String(),
+				Id: s.deletedRealm.ID.String(),
 			},
+			skip: s.deletedRealm == nil,
 		},
 	}
 
 	for _, tc := range testCases {
 		s.T().Run(tc.name, func(t *testing.T) {
+			if tc.skip {
+				s.T().Skip("environment not setup for this test case")
+			}
+
 			// arrange
 			ctx, err := utils.MakeGRPCRequestContext(context.Background())
 			require.NoError(t, err)
