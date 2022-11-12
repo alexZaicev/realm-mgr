@@ -48,7 +48,7 @@ jobs:
 
       # Run realm-mgr-grpc in the background
       - name: Run service
-        run: nohup ./dist/realm-mgr-grpc &>/dev/null &
+        run: nohup ./dist/realm-mgr-grpc -c ./helm/realm-mgr/dev-values.yaml &>/dev/null &
 
       # Execute functional tests
       - name: Run functional tests
