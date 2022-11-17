@@ -28,6 +28,7 @@ func initialize(ctx context.Context, cfgFilePath string) (*application, error) {
 	if err != nil {
 		return nil, err
 	}
+	healthCheckService := realmmgrgrpc.NewHealthChecker(logger)
 	googleUUIDGenerator := uuidgenerator.NewGoogleUUIDGenerator()
 	stdLibClock := clock.NewStdLibClock()
 	v, err := newDBOptions()
@@ -58,7 +59,7 @@ func initialize(ctx context.Context, cfgFilePath string) (*application, error) {
 	if err != nil {
 		return nil, err
 	}
-	v2 := newGRPCServices(realmManagerAPI)
+	v2 := newGRPCServices(healthCheckService, realmManagerAPI)
 	v3 := newGRPCServerOptions(logger)
 	server, err := newGRPCServerFromConfig(config, v2, v3...)
 	if err != nil {
