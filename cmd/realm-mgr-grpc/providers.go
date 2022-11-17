@@ -1,17 +1,16 @@
 package main
 
 import (
-	"log"
-	"path"
-	"runtime"
+	"fmt"
+	"os"
 
 	"google.golang.org/grpc"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	flag "github.com/spf13/pflag"
 
 	"github.com/alexZaicev/realm-mgr/internal/adapters/realmmgrgrpc"
 	"github.com/alexZaicev/realm-mgr/internal/adapters/realmmgrgrpc/interceptors"
-	realmmgr_errors "github.com/alexZaicev/realm-mgr/internal/domain/errors"
 	"github.com/alexZaicev/realm-mgr/internal/drivers/config"
 	"github.com/alexZaicev/realm-mgr/internal/drivers/grpcserver"
 	"github.com/alexZaicev/realm-mgr/internal/drivers/logging"
@@ -19,14 +18,19 @@ import (
 )
 
 const (
-	ConfigLogLevel  = "log.level"
-	ConfigGRPCPort  = "grpc.port"
-	ConfigDBHost    = "database.host"
-	ConfigDBPort    = "database.port"
-	ConfigDBUser    = "database.user"
-	ConfigDBPass    = "database.password"
-	ConfigDBName    = "database.name"
-	ConfigDBSSLMode = "database.ssl_mode"
+	FlagConfig      = "config"
+	FlagConfigShort = "c"
+)
+
+const (
+	configLogLevel  = "logging.level"
+	configGRPCPort  = "grpc.port"
+	configDBHost    = "database.host"
+	configDBPort    = "database.port"
+	configDBUser    = "database.user"
+	configDBPass    = "database.password"
+	configDBName    = "database.name"
+	configDBSSLMode = "database.ssl_mode"
 )
 
 type application struct {
@@ -41,7 +45,7 @@ func newApplication(grpcServer *grpcserver.Server) *application {
 
 func newConfigStore(cfgFilePath string) (config.Config, error) {
 	cfg, err := config.NewKoanfConfig(".").
-		WithTOML(cfgFilePath, false /*optional*/).
+		WithYAML(cfgFilePath, false /*optional*/).
 		TreatInt64AsInt(true).
 		Load()
 	if err != nil {
@@ -51,7 +55,7 @@ func newConfigStore(cfgFilePath string) (config.Config, error) {
 }
 
 func newLoggerFromConfig(cfg config.Config) (logging.Logger, error) {
-	logLevel, err := config.Get[string](cfg, ConfigLogLevel)
+	logLevel, err := config.Get[string](cfg, configLogLevel)
 	if err != nil {
 		return nil, err
 	}
@@ -59,32 +63,32 @@ func newLoggerFromConfig(cfg config.Config) (logging.Logger, error) {
 }
 
 func newDBConnectionProviderFromConfig(cfg config.Config, options ...pgdb.DBOption) (*pgdb.ConnProvider, error) {
-	dbHost, err := config.Get[string](cfg, ConfigDBHost)
+	dbHost, err := config.Get[string](cfg, configDBHost)
 	if err != nil {
 		return nil, err
 	}
-	dbPort, err := config.Get[string](cfg, ConfigDBPort)
+	dbPort, err := config.Get[int](cfg, configDBPort)
 	if err != nil {
 		return nil, err
 	}
-	dbUser, err := config.Get[string](cfg, ConfigDBUser)
+	dbUser, err := config.Get[string](cfg, configDBUser)
 	if err != nil {
 		return nil, err
 	}
-	dbPassword, err := config.Get[string](cfg, ConfigDBPass)
+	dbPassword, err := config.Get[string](cfg, configDBPass)
 	if err != nil {
 		return nil, err
 	}
-	dbName, err := config.Get[string](cfg, ConfigDBName)
+	dbName, err := config.Get[string](cfg, configDBName)
 	if err != nil {
 		return nil, err
 	}
-	dbSSLMode, err := config.Get[string](cfg, ConfigDBSSLMode)
+	dbSSLMode, err := config.Get[string](cfg, configDBSSLMode)
 	if err != nil {
 		return nil, err
 	}
 
-	return pgdb.NewConnProvider(dbHost, dbPort, dbUser, dbPassword, dbName, dbSSLMode, options...)
+	return pgdb.NewConnProvider(dbHost, fmt.Sprintf("%d", dbPort), dbUser, dbPassword, dbName, dbSSLMode, options...)
 }
 
 func newDBOptions() ([]pgdb.DBOption, error) {
@@ -96,7 +100,7 @@ func newGRPCServerFromConfig(
 	services []grpcserver.Service,
 	opt ...grpc.ServerOption,
 ) (*grpcserver.Server, error) {
-	port, err := config.Get[int](cfg, ConfigGRPCPort)
+	port, err := config.Get[int](cfg, configGRPCPort)
 	if err != nil {
 		return nil, err
 	}
@@ -120,12 +124,17 @@ func newGRPCServerOptions(logger logging.Logger) []grpc.ServerOption {
 }
 
 func getConfigFile() (string, error) {
-	_, currentFileName, _, ok := runtime.Caller(0)
-	if !ok {
-		log.Println("error fetching config file Name")
-		return "", realmmgr_errors.NewInternalError("Failed to fetch config file name", nil)
+	args := os.Args[1:]
+
+	f := flag.NewFlagSet(FlagConfig, flag.ContinueOnError)
+	f.StringP(FlagConfig, FlagConfigShort, "", "Service YAML configuration file")
+	if err := f.Parse(args); err != nil {
+		return "", fmt.Errorf("error parsing flags: %w", err)
 	}
-	currentFilePath := path.Dir(currentFileName)
-	cfgFile := currentFilePath + "/../../config.toml"
+
+	cfgFile, err := f.GetString(FlagConfig)
+	if err != nil {
+		return "", fmt.Errorf("error reading flags: %w", err)
+	}
 	return cfgFile, nil
 }

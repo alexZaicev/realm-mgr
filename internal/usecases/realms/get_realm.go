@@ -67,5 +67,13 @@ func (r *GetRealm) GetRealm(ctx context.Context, repos GetRealmRepos, input GetR
 		}
 	}
 
+	// return NotFoundError in case realm is marked as deleted
+	if realm.Status == entities.StatusDeleted {
+		return entities.Realm{}, realmmgr_errors.NewNotFoundError(
+			fmt.Sprintf("realm with ID %s not found", input.RealmID),
+			nil,
+		)
+	}
+
 	return realm, nil
 }

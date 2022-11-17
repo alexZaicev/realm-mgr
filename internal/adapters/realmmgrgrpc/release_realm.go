@@ -35,7 +35,7 @@ func (api *RealmManagerAPI) ReleaseRealm(
 	if err != nil {
 		switch err.(type) {
 		case *realmmgr_errors.NotFoundError:
-			return nil, status.Errorf(codes.NotFound, fmt.Sprintf("no releasable realm with ID %s found", realmID))
+			return nil, status.Errorf(codes.NotFound, fmt.Sprintf("no releasable realm with ID found: %s", realmID))
 		case *realmmgr_errors.InvalidArgumentError:
 			return nil, status.Errorf(codes.InvalidArgument, err.Error())
 		default:

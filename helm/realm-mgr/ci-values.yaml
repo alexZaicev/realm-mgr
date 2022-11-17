@@ -1,0 +1,13 @@
+logging:
+  level: DEBUG
+
+grpc:
+  port: 5000
+
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: mysecret
+  name: realmmgr-dev-db
+  ssl_mode: disable

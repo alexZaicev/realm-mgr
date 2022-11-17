@@ -6,6 +6,7 @@ DIR_CMD      := ./cmd
 DIR_DIST     := ./dist
 DIR_MOCKS    := ./mocks
 DIR_INTERNAL := ./internal
+DIR_FTS      := ./tests/functional
 
 MOCKERY      := mockery
 MOCKERY_ARGS := --all --keeptree --dir $(DIR_INTERNAL)
@@ -15,6 +16,7 @@ COMMIT  = $(shell git rev-parse --short HEAD)
 LDFLAGS = -X main.Version=$(VERSION)
 
 INTERNAL_NON_TEST_GO_FILES = $(shell find $(DIR_INTERNAL) -type f -name '*.go' -not -name '*_test.go')
+FUNCTIONAL_TEST_MODULES    = $(shell $(GO) list $(DIR_FTS)/...)
 
 # -----------------------------------------------------------------
 # Database build targets
@@ -49,7 +51,7 @@ dirty:
 
 .PHONY: unit
 unit: vendor
-	go test $(DIR_INTERNAL)/... $(DIR_CMD)/... \
+	$(GO) test $(DIR_INTERNAL)/... $(DIR_CMD)/... \
 		-cover \
 		-coverprofile=coverage.out \
 		-count=1
@@ -57,6 +59,12 @@ unit: vendor
 		awk 'BEGIN {cov=0; stat=0;} $$3!="" { cov+=($$3==1?$$2:0); stat+=$$2; } \
     	END {printf("Total coverage: %.2f%% of statements\n", (cov/stat)*100);}'
 	go tool cover -html=coverage.out -o coverage.html
+
+.PHONY: functional
+functional:
+	$(GO) test $(FUNCTIONAL_TEST_MODULES) \
+		-v \
+		-p 1 -count=1 -config-file=${FUNCTIONAL_TESTS_CONFIG_FILE}
 
 .PHONY: build
 build: vendor
@@ -88,14 +96,14 @@ mocks: $(INTERNAL_NON_TEST_GO_FILES)
 ## fmt: format the code
 .PHONY: fmt
 fmt:
-	gofmt -s -w -e $(DIR_CMD) $(DIR_INTERNAL)
+	gofmt -s -w -e $(DIR_CMD) $(DIR_INTERNAL) $(DIR_FTS)
 	gci write \
 		-s Standard \
 		-s Default \
 		-s 'Prefix(github.com)' \
 		-s 'Prefix(github.com/alexZaicev/realm-mgr)' \
-		$(DIR_CMD) $(DIR_INTERNAL)
-	goimports -local github.hpe.com -w $(DIR_CMD) $(DIR_INTERNAL)
+		$(DIR_CMD) $(DIR_INTERNAL) $(DIR_FTS)
+	goimports -local github.hpe.com -w $(DIR_CMD) $(DIR_INTERNAL) $(DIR_FTS)
 
 # -----------------------------------------------------------------
 # Proto build targets
