@@ -1,6 +1,7 @@
-GO   := go
-BUF  := buf
-WIRE := wire
+GO     := go
+BUF    := buf
+WIRE   := wire
+DOCKER := docker
 
 DIR_CMD      := ./cmd
 DIR_DIST     := ./dist
@@ -17,6 +18,17 @@ LDFLAGS = -X main.Version=$(VERSION)
 
 INTERNAL_NON_TEST_GO_FILES = $(shell find $(DIR_INTERNAL) -type f -name '*.go' -not -name '*_test.go')
 FUNCTIONAL_TEST_MODULES    = $(shell $(GO) list $(DIR_FTS)/...)
+
+GRPC_DOCKER_IMAGE := realm-mgr-grpc
+DOCKER_TAG         =  $(VERSION)
+
+LABEL_CREATED        = $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+LABEL_AUTHORS       := alex.zaicef@gmail.com
+LABEL_SOURCE        := https://github.com/alexZaicev/realm-mgr
+LABEL_VERSION        = $(VERSION)
+LABEL_REVISION       = $(COMMIT)
+LABEL_VENDOR        := 'Alex Zaicev'
+GRPC_LABEL_TITLE     = $(GRPC_DOCKER_IMAGE)
 
 # -----------------------------------------------------------------
 # Database build targets
@@ -143,3 +155,28 @@ proto-mocks:
 		mkdir $$module/mocks;\
 		GOFLAGS="" mockery --all --recursive --dir $$module --output "$$module/mocks";\
 	done
+
+# -----------------------------------------------------------------
+# Docker build targets
+# -----------------------------------------------------------------
+
+.PHONY: docker-build
+docker-build:
+# build grpc
+	$(DOCKER) build \
+		--pull \
+		--force-rm \
+		--target realm-mgr-grpc \
+		--network host \
+		--label org.opencontainers.image.created=$(LABEL_CREATED) \
+		--label org.opencontainers.image.authors=$(LABEL_AUTHORS) \
+		--label org.opencontainers.image.source=$(LABEL_SOURCE) \
+		--label org.opencontainers.image.version=$(LABEL_VERSION) \
+		--label org.opencontainers.image.revision=$(LABEL_REVISION) \
+		--label org.opencontainers.image.vendor=$(LABEL_VENDOR) \
+		--label org.opencontainers.image.title=$(GRPC_LABEL_TITLE) \
+		--build-arg HTTPS_PROXY=$(HTTPS_PROXY) \
+		--build-arg VERSION=$(VERSION) \
+		-t $(GRPC_DOCKER_IMAGE):$(DOCKER_TAG) \
+		.
+	@$(call built,$(GRPC_DOCKER_IMAGE):$(DOCKER_TAG))

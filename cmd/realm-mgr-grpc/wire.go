@@ -52,6 +52,7 @@ func initialize(ctx context.Context, cfgFilePath string) (*application, error) {
 		// gRPC server
 		wire.Bind(new(realmmgrgrpc.RealmOps), new(*adaptercommon.RealmUseCaseExecutor)),
 		realmmgrgrpc.NewRealmManagerAPI,
+		realmmgrgrpc.NewHealthChecker,
 		newGRPCServices,
 		newGRPCServerOptions,
 		newGRPCServerFromConfig,

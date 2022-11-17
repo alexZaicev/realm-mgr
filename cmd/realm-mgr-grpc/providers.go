@@ -108,8 +108,12 @@ func newGRPCServerFromConfig(
 	return grpcserver.NewServer(uint16(port), services, opt...)
 }
 
-func newGRPCServices(realmMgrAPI *realmmgrgrpc.RealmManagerAPI) []grpcserver.Service {
+func newGRPCServices(
+	healthCheck *realmmgrgrpc.HealthCheckService,
+	realmMgrAPI *realmmgrgrpc.RealmManagerAPI,
+) []grpcserver.Service {
 	return []grpcserver.Service{
+		healthCheck,
 		realmMgrAPI,
 	}
 }
