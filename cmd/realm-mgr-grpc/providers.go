@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	flag "github.com/spf13/pflag"
-	"google.golang.org/grpc"
 	"os"
 
+	"google.golang.org/grpc"
+
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	flag "github.com/spf13/pflag"
 
 	"github.com/alexZaicev/realm-mgr/internal/adapters/realmmgrgrpc"
 	"github.com/alexZaicev/realm-mgr/internal/adapters/realmmgrgrpc/interceptors"
